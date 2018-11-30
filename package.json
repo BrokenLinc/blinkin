@@ -16,17 +16,17 @@
     "build-storybook": "build-storybook -s public"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3",
-    "react-scripts": "^2.1.1",
-    "rimraf": "^2.6.2",
-    "@storybook/react": "^4.0.9",
+    "@babel/core": "^7.1.6",
     "@storybook/addon-actions": "^4.0.9",
     "@storybook/addon-links": "^4.0.9",
     "@storybook/addons": "^4.0.9",
-    "@babel/core": "^7.1.6",
-    "babel-loader": "^8.0.4"
+    "@storybook/react": "^4.0.9",
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^8.0.4",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-scripts": "^2.1.1",
+    "rimraf": "^2.6.2"
   },
   "browserslist": [
     ">0.2%",
@@ -34,5 +34,8 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "prop-types": "^15.6.2",
+    "svg-path-generator": "^1.1.0"
+  }
 }

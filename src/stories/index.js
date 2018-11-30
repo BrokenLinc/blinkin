@@ -1,6 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 
-import { TextInput } from '../lib';
+import Ring from '../lib/svg/Ring';
 
-storiesOf('TextInput', module).add('Default', () => <TextInput />);
+storiesOf('Ring', module).add('Default', () => <Ring />);
