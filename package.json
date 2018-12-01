@@ -35,7 +35,11 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@hocs/safe-timers": "^0.4.0",
+    "@hocs/throttle-handler": "^0.5.0",
+    "lodash": "^4.17.11",
     "prop-types": "^15.6.2",
+    "recompose": "^0.30.0",
     "styled-components": "^4.1.2",
     "svg-path-generator": "^1.1.0"
   }
