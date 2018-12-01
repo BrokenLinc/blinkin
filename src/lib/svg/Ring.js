@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled, { css, keyframes } from 'styled-components';
 
-import describeArc from '../util/describeArc';
 import SVG_ATTRIBUTES from '../const/svgAttributes';
+import describeArc from '../util/describeArc';
 
 const clockwiseKeyframes = keyframes`
   100% {
