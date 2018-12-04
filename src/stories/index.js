@@ -1,23 +1,23 @@
 import React from 'react';
 import { setAddon, storiesOf } from '@storybook/react';
-import { color, number, select, withKnobs } from '@storybook/addon-knobs';
+import { color, number, select, text, withKnobs } from '@storybook/addon-knobs';
 import JSXAddon from 'storybook-addon-jsx';
 import { withBackgrounds } from '@storybook/addon-backgrounds';
 
 import Ring from '../lib/svg/Ring';
 import ShimmerText from '../lib/text/ShimmerText';
+import Waves from '../lib/canvas/Waves';
 
 setAddon(JSXAddon);
 
 const withThemeBackgrounds = withBackgrounds([
   { name: 'white', value: '#fff', default: true },
-  { name: 'twitter', value: '#00aced' },
-  { name: 'facebook', value: '#3b5998' },
+  { name: 'black', value: '#000' },
 ]);
 
 storiesOf('Ring', module)
-  .addDecorator(withThemeBackgrounds)
   .addDecorator(withKnobs)
+  .addDecorator(withThemeBackgrounds)
   .addWithJSX('Default', () => <Ring />)
   .addWithJSX('Color', () => <Ring color="#6523e2" />)
   .addWithJSX('Stroke', () => <Ring strokeWidth={24} strokeLinecap="round" />)
@@ -36,5 +36,17 @@ storiesOf('Ring', module)
 ;
 
 storiesOf('ShimmerText', module)
+  .addDecorator(withKnobs)
+  .addDecorator(withThemeBackgrounds)
   .addWithJSX('Default', () => <ShimmerText>Hello beautiful world gone awry</ShimmerText>)
-  .addWithJSX('Duration', () => <ShimmerText duration={5}>Hello beautiful world gone awry</ShimmerText>);
+  .addWithJSX('Duration', () => <ShimmerText duration={5}>Hello beautiful world gone awry</ShimmerText>)
+  .addWithJSX('Knobs', () => <ShimmerText
+    children={text('children', 'Hello beautiful world gone awry')}
+    duration={number('duration', ShimmerText.defaultProps.duration)}
+    waves={number('waves', ShimmerText.defaultProps.waves)}
+  />);
+
+storiesOf('Waves', module)
+  .addDecorator(withKnobs)
+  .addDecorator(withThemeBackgrounds)
+  .addWithJSX('Default', () => <Waves isActive={true} />);

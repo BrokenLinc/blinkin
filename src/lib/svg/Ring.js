@@ -12,7 +12,7 @@ const clockwiseKeyframes = keyframes`
 `;
 const SpinningPath = styled.path`
   ${({ duration, origin }) => css`
-    animation: ${clockwiseKeyframes} ${duration}s linear 0s infinite;
+    animation: ${clockwiseKeyframes} ${duration}s linear infinite;
     transform-origin: ${origin[0]}px ${origin[1]}px;
   `}
 `;
