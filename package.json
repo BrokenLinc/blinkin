@@ -1,0 +1,51 @@
+{
+  "name": "blinkin",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "react-scripts start",
+    "build-examples": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "build": "rimraf dist && NODE_ENV=production babel src/lib --out-dir dist --copy-files --ignore __tests__,spec.js,test.js,__snapshots__",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@storybook/addon-actions": "^4.0.9",
+    "@storybook/addon-backgrounds": "^4.0.8",
+    "@storybook/addon-knobs": "^4.0.9",
+    "@storybook/addon-links": "^4.0.9",
+    "@storybook/addons": "^4.0.9",
+    "@storybook/react": "^4.0.9",
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^8.0.4",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-scripts": "^2.1.1",
+    "rimraf": "^2.6.2",
+    "storybook-addon-jsx": "^6.0.0",
+    "storybook-addon-react-docgen": "^1.0.4"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "dependencies": {
+    "@hocs/safe-timers": "^0.4.0",
+    "@hocs/throttle-handler": "^0.5.0",
+    "lodash": "^4.17.11",
+    "prop-types": "^15.6.2",
+    "react-resize-detector": "^3.2.1",
+    "recompose": "^0.30.0",
+    "styled-components": "^4.1.2",
+    "svg-path-generator": "^1.1.0"
+  }
+}
