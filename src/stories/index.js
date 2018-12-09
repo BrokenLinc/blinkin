@@ -6,6 +6,7 @@ import { withBackgrounds } from '@storybook/addon-backgrounds';
 
 import Ring from '../lib/svg/Ring';
 import ShimmerText from '../lib/text/ShimmerText';
+import FluidCanvasExample from '../lib/canvas/FluidCanvasExample';
 import Waves from '../lib/canvas/Waves';
 
 setAddon(JSXAddon);
@@ -14,6 +15,9 @@ const withThemeBackgrounds = withBackgrounds([
   { name: 'white', value: '#fff', default: true },
   { name: 'black', value: '#000' },
 ]);
+
+storiesOf('FluidCanvasExample', module)
+  .addWithJSX('Default', () => <FluidCanvasExample todd="yancy" />);
 
 storiesOf('Ring', module)
   .addDecorator(withKnobs)
