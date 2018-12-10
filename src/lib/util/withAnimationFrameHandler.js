@@ -10,7 +10,8 @@ const handleNextAnimationFrame = () => {
 };
 
 const handleAnimationFrame = () => {
-  each(callbacks, (callback) => callback());
+  const time = new Date().getTime();
+  each(callbacks, (callback) => callback(time));
   handleNextAnimationFrame();
 };
 
@@ -18,8 +19,8 @@ handleNextAnimationFrame();
 
 const withAnimationFrameHandler = (config = {}) => compose(
   withHandlers({
-    handleAnimationFrame: (props) => () => {
-      config.callback && config.callback(props);
+    handleAnimationFrame: (props) => (time) => {
+      config.callback && config.callback(props, time);
     },
   }),
   throttleHandler('handleAnimationFrame', config.throttle || 42),

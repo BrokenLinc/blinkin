@@ -6,6 +6,7 @@ import { withBackgrounds } from '@storybook/addon-backgrounds';
 
 import Ring from '../lib/svg/Ring';
 import ShimmerText from '../lib/text/ShimmerText';
+import ArcSpinner from '../lib/canvas/ArcSpinner';
 import FluidCanvasExample from '../lib/canvas/FluidCanvasExample';
 import Waves from '../lib/canvas/Waves';
 
@@ -16,8 +17,11 @@ const withThemeBackgrounds = withBackgrounds([
   { name: 'black', value: '#000' },
 ]);
 
+storiesOf('ArcSpinner', module)
+  .addWithJSX('Default', () => <ArcSpinner style={{ height: 100 }} />);
+
 storiesOf('FluidCanvasExample', module)
-  .addWithJSX('Default', () => <FluidCanvasExample todd="yancy" />);
+  .addWithJSX('Default', () => <FluidCanvasExample />);
 
 storiesOf('Ring', module)
   .addDecorator(withKnobs)

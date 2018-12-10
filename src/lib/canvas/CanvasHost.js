@@ -7,12 +7,12 @@ const styles = {
   canvas: { width:'100%', height:'100%', position:'absolute' },
 };
 
-const CanvasHost = ({ canvasClasses, canvasStyle, classes, handleCanvasRef, height, style, width }) => (
+const CanvasHost = ({ canvasClasses, canvasHeight, canvasStyle, canvasWidth, classes, handleCanvasRef, style }) => (
   <div className={classes} style={{ ...styles.host, ...style }}>
     <canvas
       ref={handleCanvasRef}
-      height={(height || 0) * window.devicePixelRatio}
-      width={(width || 0) * window.devicePixelRatio}
+      height={canvasHeight}
+      width={canvasWidth}
       className={canvasClasses}
       style={{ ...styles.canvas, ...canvasStyle }}
     />
