@@ -7,8 +7,8 @@ import { withBackgrounds } from '@storybook/addon-backgrounds';
 import Ring from '../lib/svg/Ring';
 import ShimmerText from '../lib/text/ShimmerText';
 import ArcSpinner from '../lib/canvas/ArcSpinner';
-import FluidCanvasExample from '../lib/canvas/FluidCanvasExample';
 import Waves from '../lib/canvas/Waves';
+import Waves2 from '../lib/canvas/Waves2';
 
 setAddon(JSXAddon);
 
@@ -19,9 +19,6 @@ const withThemeBackgrounds = withBackgrounds([
 
 storiesOf('ArcSpinner', module)
   .addWithJSX('Default', () => <ArcSpinner style={{ height: 100 }} />);
-
-storiesOf('FluidCanvasExample', module)
-  .addWithJSX('Default', () => <FluidCanvasExample />);
 
 storiesOf('Ring', module)
   .addDecorator(withKnobs)
@@ -58,3 +55,8 @@ storiesOf('Waves', module)
   .addDecorator(withKnobs)
   .addDecorator(withThemeBackgrounds)
   .addWithJSX('Default', () => <Waves isActive={true} />);
+
+storiesOf('Waves2', module)
+  .addDecorator(withKnobs)
+  .addDecorator(withThemeBackgrounds)
+  .addWithJSX('Default', () => <Waves2 />);
