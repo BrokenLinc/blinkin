@@ -1,4 +1,3 @@
-// import React, { Component } from 'react';
 import CanvasComponent from './CanvasComponent';
 
 class SineWave {
@@ -33,8 +32,8 @@ class SineWave {
 
 class Waves2 extends CanvasComponent {
 
-  setup({ ctx }) {
-    ctx.lineWidth = window.devicePixelRatio;
+  setup({ ctx, devicePixelRatio }) {
+    ctx.lineWidth = devicePixelRatio;
 
     this.waves = [
       new SineWave({
@@ -57,7 +56,7 @@ class Waves2 extends CanvasComponent {
       }),
     ];
   }
-  draw({ ctx, height, width }) {
+  draw({ ctx, canvasHeight: height, canvasWidth: width }) {
     ctx.clearRect(0, 0, width, height);
 
     for (let i = 0; i < this.waves.length; i += 1) {

@@ -1,27 +1,17 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactResizeDetector from 'react-resize-detector';
 
-// TODO: add resize detector
-
-const getWindowDimensions = (props) => {
-  const width = props.width * window.devicePixelRatio;
-  const height = props.height * window.devicePixelRatio;
-
-  return {
-    hostWidth: props.width,
-    hostHeight: props.height,
-    width,
-    height,
-  };
-};
+const getState = ({ devicePixelRatio, height, width }) => ({
+  canvasHeight: height * devicePixelRatio,
+  canvasWidth: width * devicePixelRatio,
+  height,
+  width,
+});;
 
 class CanvasComponent extends Component {
   constructor(props) {
     super(props);
-
-    // this.state = getWindowDimensions(props);
-    this.state = {};
+    this.state = getState(props);
   }
 
   handleCanvasRef = (element) => {
@@ -29,11 +19,15 @@ class CanvasComponent extends Component {
       this.canvas = element;
       this.ctx = this.canvas.getContext('2d');
     }
-  }
+  };
 
-  handleResize = (width, height) => {
-    // console.log(width, height);
-    this.setState(getWindowDimensions({ width, height }));
+  getPassableProps() {
+    return {
+      canvas: this.canvas,
+      ctx: this.ctx,
+      ...this.props,
+      ...this.state,
+    };
   }
 
   componentWillUnmount() {
@@ -41,54 +35,63 @@ class CanvasComponent extends Component {
   }
 
   componentDidMount() {
-    this.setup && this.setup({
-      canvas: this.canvas,
-      ctx: this.ctx,
-      ...this.state,
-    });
-
+    this.setup && this.setup(this.getPassableProps());
     this.gameLoop();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // TODO: skip if props haven't changed
+    this.setState(getState(nextProps));
   }
 
   gameLoop() {
     if (this.willUnmount) return;
 
+    const { disabled, disablingDelay, maxFps } = this.props;
     const now = new Date().getTime();
 
-    if (!this.props.disabled) {
-      this.expirationTime = now + (this.props.disablingDelay || 0);
+    if (!disabled) {
+      this.expirationTime = now + disablingDelay;
     }
 
     if (this.expirationTime >= now && this.ctx) {
-      this.draw && this.draw({
-        canvas: this.canvas,
-        ctx: this.ctx,
-        ...this.state,
-      });
+      this.draw && this.draw(this.getPassableProps());
     }
 
     requestAnimationFrame(() => {
-      setTimeout(this.gameLoop.bind(this), 1000 / (this.props.maxFps || 50)); // throttle fps
+      setTimeout(this.gameLoop.bind(this), 1000 / maxFps); // throttle fps
     });
   }
 
   render() {
+    const { canvasHeight,  canvasWidth,  height,  width } = this.state;
+
     return (
-      <Fragment>
-        <ReactResizeDetector handleWidth handleHeight onResize={this.handleResize} />
-        <canvas
-          style={{ width: this.state.hostWidth, height: this.state.hostHeight}}
-          width={this.state.width}
-          height={this.state.height}
-          ref={this.handleCanvasRef}
-        />
-      </Fragment>
+      <canvas
+        style={{ height, width }}
+        height={canvasHeight}
+        width={canvasWidth}
+        ref={this.handleCanvasRef}
+      />
     );
   }
 }
 
 CanvasComponent.propTypes = {
+  devicePixelRatio: PropTypes.number,
   disabled: PropTypes.bool,
+  disablingDelay: PropTypes.number,
+  height: PropTypes.number,
+  maxFps: PropTypes.number,
+  width: PropTypes.number,
+};
+
+CanvasComponent.defaultProps = {
+  devicePixelRatio: window.devicePixelRatio,
+  disablingDelay: 0,
+  height: 320,
+  maxFps: 50,
+  width: 320,
 };
 
 export default CanvasComponent;
