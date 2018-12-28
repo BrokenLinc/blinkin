@@ -56,7 +56,7 @@ class Waves2 extends CanvasComponent {
       }),
     ];
   }
-  draw({ ctx, canvasHeight: height, canvasWidth: width }) {
+  draw({ ctx, canvasHeight: height, canvasWidth: width, centerY }) {
     ctx.clearRect(0, 0, width, height);
 
     for (let i = 0; i < this.waves.length; i += 1) {
@@ -65,7 +65,6 @@ class Waves2 extends CanvasComponent {
     }
 
     const envelopeMultiplier = Math.PI / width;
-    const midLine = height / 2;
     const segmentWidth = width / 128;
 
     for (let x = 0; x <= width; x += segmentWidth) {
@@ -77,8 +76,8 @@ class Waves2 extends CanvasComponent {
         wave.incrementSegment(segmentWidth);
 
         // adjust y for the canvas coordinates
-        const y1 = height * (wave.y1 * envelope) + midLine + i * 5;
-        const y2 = height * (wave.y2 * envelope) + midLine + i * 5;
+        const y1 = height * (wave.y1 * envelope) + centerY + i * 5;
+        const y2 = height * (wave.y2 * envelope) + centerY + i * 5;
 
         // Skip the first point as "lineTo" value
         if (x !== 0) {

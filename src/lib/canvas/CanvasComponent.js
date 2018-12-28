@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-const getState = ({ devicePixelRatio, height, width }) => ({
-  canvasHeight: height * devicePixelRatio,
-  canvasWidth: width * devicePixelRatio,
-  height,
-  width,
-});;
+const getState = ({ devicePixelRatio, height, width }) => {
+  const canvasHeight = height * devicePixelRatio;
+  const canvasWidth = width * devicePixelRatio;
+
+  return {
+    canvasHeight,
+    canvasWidth,
+    centerX: canvasWidth / 2, // TODO: round?
+    centerY: canvasHeight / 2, // TODO: round?
+    height,
+    width,
+  };
+};
 
 class CanvasComponent extends Component {
   constructor(props) {
