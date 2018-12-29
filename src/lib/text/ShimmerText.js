@@ -15,9 +15,13 @@ const Letter = styled.span`
   `}
 `;
 
-const ShimmerText = ({ children: text, duration, waves }) => map(text, (letter, index) => (
-  <Letter key={index} duration={duration} interval={(index/text.length) % 1} waves={waves}>{letter}</Letter>
-));
+const ShimmerText = ({ children: text, duration, waves }) => (
+  <span>
+    {map(text, (letter, index) => (
+      <Letter key={index} duration={duration} interval={(index/text.length) % 1} waves={waves}>{letter}</Letter>
+    ))}
+  </span>
+);
 
 ShimmerText.propTypes = {
   children: PropTypes.string.isRequired,
