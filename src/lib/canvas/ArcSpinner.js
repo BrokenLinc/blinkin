@@ -1,25 +1,25 @@
 import PropTypes from 'prop-types';
-import { compose } from 'recompose';
-import withFluidCanvas from '../util/withFluidCanvas';
-import { renderCanvasHost } from './CanvasHost';
+import { compose, withHandlers } from 'recompose';
+
+import AnimatedCanvas from './AnimatedCanvas';
 
 const ArcSpinner = compose(
-  withFluidCanvas({
-    callback: ({ canvasHeight, canvasWidth, color, ctx, strokeWidth }, time) => {
+  withHandlers({
+    setup: ({ color, strokeWidth }) => ({ ctx }) => {
+      ctx.lineWidth = strokeWidth;
+      ctx.strokeStyle = color;
+    },
+    draw: ({ strokeWidth }) => ({ canvasHeight, canvasWidth, ctx, time }) => {
       const startAngle = (time / 200) % 1000;
       const endAngle = startAngle + Math.PI * (Math.sin(time / 400) + 2) / 2;
       const smallerDimension = Math.min(canvasHeight, canvasWidth);
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-      ctx.lineWidth = strokeWidth;
-      ctx.strokeStyle = color;
       ctx.beginPath();
       ctx.arc(canvasWidth / 2, canvasHeight / 2, (smallerDimension - strokeWidth) / 2, startAngle, endAngle);
       ctx.stroke();
     },
-    throttle: 21,
   }),
-  renderCanvasHost,
-)();
+)(AnimatedCanvas);
 
 ArcSpinner.propTypes = {
   color: PropTypes.string,
@@ -27,8 +27,11 @@ ArcSpinner.propTypes = {
 };
 
 ArcSpinner.defaultProps = {
-  color: 'magenta',
+  color: '#888',
+  height: 60,
+  maxFps: 70,
   strokeWidth: 10,
+  width: 60,
 };
 
 export default ArcSpinner;

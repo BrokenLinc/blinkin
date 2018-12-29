@@ -13,7 +13,7 @@ const getState = ({ devicePixelRatio, height, width }) => {
   };
 };
 
-class CanvasComponent extends Component {
+class AnimatedCanvas extends Component {
   constructor(props) {
     super(props);
     this.state = getState(props);
@@ -28,10 +28,11 @@ class CanvasComponent extends Component {
 
   getPassableProps() {
     return {
-      canvas: this.canvas,
-      ctx: this.ctx,
       ...this.props,
       ...this.state,
+      canvas: this.canvas,
+      ctx: this.ctx,
+      time: new Date().getTime(),
     };
   }
 
@@ -83,7 +84,7 @@ class CanvasComponent extends Component {
   }
 }
 
-CanvasComponent.propTypes = {
+AnimatedCanvas.propTypes = {
   devicePixelRatio: PropTypes.number,
   disabled: PropTypes.bool,
   disablingDelay: PropTypes.number,
@@ -94,7 +95,7 @@ CanvasComponent.propTypes = {
   width: PropTypes.number,
 };
 
-CanvasComponent.defaultProps = {
+AnimatedCanvas.defaultProps = {
   devicePixelRatio: window.devicePixelRatio,
   disablingDelay: 0,
   draw: () => {},
@@ -104,4 +105,4 @@ CanvasComponent.defaultProps = {
   width: 100,
 };
 
-export default CanvasComponent;
+export default AnimatedCanvas;

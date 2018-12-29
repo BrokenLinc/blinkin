@@ -1,4 +1,5 @@
-import CanvasComponent from './CanvasComponent';
+import React, { Component } from 'react';
+import AnimatedCanvas from './AnimatedCanvas';
 
 class SineWave {
   constructor({ frequency, amplitudeMultiplier, timeFactor, color }) {
@@ -30,9 +31,8 @@ class SineWave {
   }
 }
 
-class Waves2 extends CanvasComponent {
-
-  setup({ ctx, devicePixelRatio }) {
+class Waves2 extends Component {
+  setup = ({ ctx, devicePixelRatio }) => {
     ctx.lineWidth = devicePixelRatio;
 
     this.waves = [
@@ -55,8 +55,9 @@ class Waves2 extends CanvasComponent {
         color: (envelope) => `rgba(0, 167, 191, ${(envelope ** 3)})`,
       }),
     ];
-  }
-  draw({ ctx, canvasHeight: height, canvasWidth: width, centerY }) {
+  };
+
+  draw = ({ ctx, canvasHeight: height, canvasWidth: width, centerY }) => {
     ctx.clearRect(0, 0, width, height);
 
     for (let i = 0; i < this.waves.length; i += 1) {
@@ -89,6 +90,16 @@ class Waves2 extends CanvasComponent {
         }
       }
     }
+  };
+
+  render() {
+    return (
+      <AnimatedCanvas
+        {...this.props}
+        setup={this.setup}
+        draw={this.draw}
+      />
+    );
   }
 }
 
