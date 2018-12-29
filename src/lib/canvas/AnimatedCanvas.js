@@ -70,21 +70,27 @@ class AnimatedCanvas extends Component {
   }
 
   render() {
-    const { height, width } = this.props;
+    const { className, devicePixelRatio, height, style, width } = this.props;
     const { canvasHeight, canvasWidth } = this.state;
 
     return (
-      <canvas
-        style={{ height, width }}
-        height={canvasHeight}
-        width={canvasWidth}
-        ref={this.handleCanvasRef}
-      />
+      <div className={className} style={{ height, width, ...style }}>
+        <canvas
+          style={{
+            transform: `scale(${1/devicePixelRatio})`,
+            transformOrigin: '0 0',
+          }}
+          height={canvasHeight}
+          width={canvasWidth}
+          ref={this.handleCanvasRef}
+        />
+      </div>
     );
   }
 }
 
 AnimatedCanvas.propTypes = {
+  className: PropTypes.string,
   devicePixelRatio: PropTypes.number,
   disabled: PropTypes.bool,
   disablingDelay: PropTypes.number,
@@ -92,6 +98,7 @@ AnimatedCanvas.propTypes = {
   height: PropTypes.number,
   maxFps: PropTypes.number,
   setup: PropTypes.func,
+  style: PropTypes.object,
   width: PropTypes.number,
 };
 
