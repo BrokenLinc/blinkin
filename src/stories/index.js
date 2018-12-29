@@ -7,8 +7,6 @@ import { withBackgrounds } from '@storybook/addon-backgrounds';
 import Ring from '../lib/svg/Ring';
 import ShimmerText from '../lib/text/ShimmerText';
 import ArcSpinner from '../lib/canvas/ArcSpinner';
-import Waves from '../lib/canvas/Waves';
-import Waves2 from '../lib/canvas/Waves2';
 import Waves3 from '../lib/canvas/Waves3';
 
 setAddon(JSXAddon);
@@ -51,16 +49,6 @@ storiesOf('ShimmerText', module)
     duration={number('duration', ShimmerText.defaultProps.duration)}
     waves={number('waves', ShimmerText.defaultProps.waves)}
   />);
-
-storiesOf('Waves', module)
-  .addDecorator(withKnobs)
-  .addDecorator(withThemeBackgrounds)
-  .addWithJSX('Default', () => <Waves isActive={true} />);
-
-storiesOf('Waves2', module)
-  .addDecorator(withKnobs)
-  .addDecorator(withThemeBackgrounds)
-  .addWithJSX('Default', () => <Waves2 />);
 
 storiesOf('Waves3', module)
   .addDecorator(withKnobs)
