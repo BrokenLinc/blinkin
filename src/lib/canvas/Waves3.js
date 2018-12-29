@@ -69,11 +69,13 @@ const Waves3 = compose(
 )(AnimatedCanvas);
 
 Waves3.propTypes = {
+  className: PropTypes.string,
   devicePixelRatio: PropTypes.number,
   disabled: PropTypes.bool,
   disablingDelay: PropTypes.number,
   height: PropTypes.number,
   maxFps: PropTypes.number,
+  style: PropTypes.object,
   width: PropTypes.number,
 };
 
