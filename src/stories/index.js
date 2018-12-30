@@ -7,6 +7,7 @@ import { withBackgrounds } from '@storybook/addon-backgrounds';
 import Ring from '../lib/svg/Ring';
 import ShimmerText from '../lib/text/ShimmerText';
 import ArcSpinner from '../lib/canvas/ArcSpinner';
+import Particles1 from '../lib/canvas/Particles1';
 import Waves3 from '../lib/canvas/Waves3';
 
 setAddon(JSXAddon);
@@ -16,10 +17,18 @@ const withThemeBackgrounds = withBackgrounds([
   { name: 'black', value: '#000' },
 ]);
 
-storiesOf('ArcSpinner', module)
+storiesOf('Canvas/ArcSpinner', module)
+  .addDecorator(withKnobs)
+  .addDecorator(withThemeBackgrounds)
+  .addDecorator((story) => <div className='centered-content'>{story()}</div> )
   .addWithJSX('Default', () => <ArcSpinner style={{ height: 100 }} />);
 
-storiesOf('Ring', module)
+storiesOf('Canvas/Particles1', module)
+  .addDecorator(withKnobs)
+  .addDecorator(withThemeBackgrounds)
+  .addWithJSX('Default', () => <Particles1 />);
+
+storiesOf('SVG/Ring', module)
   .addDecorator(withKnobs)
   .addDecorator(withThemeBackgrounds)
   .addWithJSX('Default', () => <Ring />)
@@ -39,7 +48,7 @@ storiesOf('Ring', module)
   />)
 ;
 
-storiesOf('ShimmerText', module)
+storiesOf('Text/ShimmerText', module)
   .addDecorator(withKnobs)
   .addDecorator(withThemeBackgrounds)
   .addWithJSX('Default', () => <ShimmerText>Hello beautiful world gone awry</ShimmerText>)
@@ -50,7 +59,7 @@ storiesOf('ShimmerText', module)
     waves={number('waves', ShimmerText.defaultProps.waves)}
   />);
 
-storiesOf('Waves3', module)
+storiesOf('Canvas/Waves3', module)
   .addDecorator(withKnobs)
   .addDecorator(withThemeBackgrounds)
   .addWithJSX('Default', () => <Waves3 />);

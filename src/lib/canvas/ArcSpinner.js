@@ -9,7 +9,7 @@ const ANGLE_SPREAD = 0.9;
 
 const ArcSpinner = compose(
   withHandlers({
-    setup: ({ color, lineCap, strokeWidth }) => ({ ctx }) => {
+    update: ({ color, lineCap, strokeWidth }) => ({ ctx }) => {
       if (typeof color === 'object') {
         const gradient = ctx.createLinearGradient(...color.coords);
         for (let i = 0; i < color.colorStops.length; i += 1) {
@@ -45,7 +45,7 @@ ArcSpinner.propTypes = {
 };
 
 ArcSpinner.defaultProps = {
-  color: '#000',
+  color: '#888',
   // color: {
   //   coords: [0, 0, 0, 120],
   //   colorStops: [

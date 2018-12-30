@@ -26,10 +26,10 @@ class AnimatedCanvas extends Component {
     }
   };
 
-  getPassableProps() {
+  getPassableProps(nextProps, nextState) {
     return {
-      ...this.props,
-      ...this.state,
+      ...(nextProps || this.props),
+      ...(nextState || this.state),
       canvas: this.canvas,
       ctx: this.ctx,
       time: new Date().getTime(),
@@ -42,15 +42,31 @@ class AnimatedCanvas extends Component {
 
   componentDidMount() {
     this.props.setup(this.getPassableProps());
+    this.props.update(this.getPassableProps());
     this.gameLoop();
   }
 
   componentWillReceiveProps(nextProps) {
-    // TODO: skip if props haven't changed
-    this.setState(getState(nextProps));
+    // TODO: lodash shallow equal?
+    let propsAreIdentical = true;
+    if (nextProps.devicePixelRatio !== this.props.devicePixelRatio) propsAreIdentical = false;
+    if (nextProps.height !== this.props.height) propsAreIdentical = false;
+    if (nextProps.width !== this.props.width) propsAreIdentical = false;
+
+    if (!propsAreIdentical) {
+      this.setState(getState(nextProps));
+    }
   }
 
-  gameLoop() {
+  componentDidUpdate(prevProps, prevState) {
+    this.props.update(
+      this.getPassableProps(),
+      this.getPassableProps(prevProps, prevState),
+    );
+    this.gameLoop(true);
+  }
+
+  gameLoop(once) {
     if (this.willUnmount) return;
 
     const { disabled, disablingDelay, maxFps } = this.props;
@@ -64,9 +80,11 @@ class AnimatedCanvas extends Component {
       this.props.draw(this.getPassableProps());
     }
 
-    requestAnimationFrame(() => {
-      setTimeout(this.gameLoop.bind(this), 1000 / maxFps); // throttle fps
-    });
+    if(!once) {
+      requestAnimationFrame(() => {
+        setTimeout(this.gameLoop.bind(this), 1000 / maxFps); // throttle fps
+      });
+    }
   }
 
   render() {
@@ -74,7 +92,7 @@ class AnimatedCanvas extends Component {
     const { canvasHeight, canvasWidth } = this.state;
 
     return (
-      <div className={className} style={{ height, width, ...style }}>
+      <div className={className} style={{ height, overflow: 'hidden', width, ...style }}>
         <canvas
           style={{
             transform: `scale(${1/devicePixelRatio})`,
@@ -99,6 +117,7 @@ AnimatedCanvas.propTypes = {
   maxFps: PropTypes.number,
   setup: PropTypes.func,
   style: PropTypes.object,
+  update: PropTypes.func,
   width: PropTypes.number,
 };
 
@@ -109,6 +128,7 @@ AnimatedCanvas.defaultProps = {
   height: 100,
   maxFps: 70,
   setup: () => {},
+  update: () => {},
   width: 100,
 };
 
