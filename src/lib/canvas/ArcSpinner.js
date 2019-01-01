@@ -1,15 +1,14 @@
 import PropTypes from 'prop-types';
-import { compose, withHandlers } from 'recompose';
+import { compose, withHandlers, withProps } from 'recompose';
 
 import AnimatedCanvas from './AnimatedCanvas';
 
-const START_SPEED = 8.8;
-const END_SPEED = 2.2;
-const ANGLE_SPREAD = 0.9;
-
 const ArcSpinner = compose(
+  withProps({
+    data: {},
+  }),
   withHandlers({
-    update: ({ color, lineCap, strokeWidth }) => ({ ctx }) => {
+    update: ({ color, data, lineCap, strokeWidth }) => ({ canvasHeight, canvasWidth, ctx }) => {
       if (typeof color === 'object') {
         const gradient = ctx.createLinearGradient(...color.coords);
         for (let i = 0; i < color.colorStops.length; i += 1) {
@@ -22,40 +21,50 @@ const ArcSpinner = compose(
 
       ctx.lineCap = lineCap;
       ctx.lineWidth = strokeWidth;
+
+      data.radius = (Math.min(canvasHeight, canvasWidth) - strokeWidth) / 2;
     },
-    draw: ({ strokeWidth }) => ({ canvasHeight, canvasWidth, ctx, time }) => {
-      const startAngle = (time * (START_SPEED / 1000)) % 1000;
-      const endAngle = startAngle + Math.PI * ((Math.sin(time * END_SPEED / 1000) + 1) * ANGLE_SPREAD + (1 - ANGLE_SPREAD));
-      const smallerDimension = Math.min(canvasHeight, canvasWidth);
+    draw: ({ angleSpread, data, endSpeed, startSpeed }) => ({ canvasHeight, canvasWidth, ctx, time }) => {
+      const startAngle = (time * (startSpeed / 1000)) % 1000;
+      const endAngle = startAngle + Math.PI * ((Math.sin(time * endSpeed / 1000) + 1) * angleSpread + (1 - angleSpread));
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       ctx.beginPath();
-      ctx.arc(canvasWidth / 2, canvasHeight / 2, (smallerDimension - strokeWidth) / 2, startAngle, endAngle);
+      ctx.arc(canvasWidth / 2, canvasHeight / 2, data.radius, startAngle, endAngle);
       ctx.stroke();
     },
   }),
 )(AnimatedCanvas);
 
 ArcSpinner.propTypes = {
+  angleSpread: PropTypes.number,
   color: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.string,
   ]),
-  lineCap: PropTypes.string,
+  endSpeed: PropTypes.number,
+  lineCap: PropTypes.oneOf(['butt', 'round', 'square']),
+  startSpeed: PropTypes.number,
   strokeWidth: PropTypes.number,
+
+  // inherited from AnimatedCanvas
+  className: PropTypes.string,
+  devicePixelRatio: PropTypes.number,
+  disabled: PropTypes.bool,
+  disablingDelay: PropTypes.number,
+  height: PropTypes.number,
+  maxFps: PropTypes.number,
+  style: PropTypes.object,
+  width: PropTypes.number,
 };
 
 ArcSpinner.defaultProps = {
+  angleSpread: 0.9,
   color: '#888',
-  // color: {
-  //   coords: [0, 0, 0, 120],
-  //   colorStops: [
-  //     { stop: 0, color: '#22BBEE' },
-  //     { stop: 1, color: '#2222CC' },
-  //   ],
-  // },
+  endSpeed: 2.2,
   height: 60,
-  lineCap: 'round',
+  lineCap: 'butt',
   maxFps: 70,
+  startSpeed: 8.8,
   strokeWidth: 6,
   width: 60,
 };

@@ -108,16 +108,18 @@ class AnimatedCanvas extends Component {
 }
 
 AnimatedCanvas.propTypes = {
+  draw: PropTypes.func,
+  setup: PropTypes.func,
+  update: PropTypes.func,
+
+  // could be inherited by wrapped components
   className: PropTypes.string,
   devicePixelRatio: PropTypes.number,
   disabled: PropTypes.bool,
   disablingDelay: PropTypes.number,
-  draw: PropTypes.func,
   height: PropTypes.number,
   maxFps: PropTypes.number,
-  setup: PropTypes.func,
   style: PropTypes.object,
-  update: PropTypes.func,
   width: PropTypes.number,
 };
 
@@ -125,11 +127,11 @@ AnimatedCanvas.defaultProps = {
   devicePixelRatio: window.devicePixelRatio,
   disablingDelay: 0,
   draw: () => {},
-  height: 100,
+  height: 0,
   maxFps: 70,
   setup: () => {},
   update: () => {},
-  width: 100,
+  width: 0,
 };
 
 export default AnimatedCanvas;

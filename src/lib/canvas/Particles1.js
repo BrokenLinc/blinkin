@@ -1,14 +1,10 @@
 import React from 'react';
-import { compose, withHandlers, withProps } from 'recompose';
+import { compose, withHandlers, withProps, withPropsOnChange } from 'recompose';
 import PropTypes from 'prop-types';
-import { withResizeDetector } from 'react-resize-detector';
 import { each, filter } from 'lodash';
+import color from 'color';
 
 import AnimatedCanvas from './AnimatedCanvas';
-
-const POINT_PROXIMITY = 140;
-const POINT_PROXIMITY_SQUARED = POINT_PROXIMITY * POINT_PROXIMITY;
-const POINTS_PER_SQUARE_PIXEL = 0.0002;
 
 class Particle {
   constructor({ x = 0, y = 0, dx = 0, dy = 0 }) {
@@ -30,11 +26,14 @@ class Particle {
 
 const Particles1 = compose(
   withProps({
-    data: { points: [] },
+    data: {},
   }),
+  withPropsOnChange(['segmentColor'], ({ segmentColor }) => ({
+    segmentColorObject: color(segmentColor),
+  })),
   withHandlers({
-    addPointsInRegion: ({ data }) => ({ x, y, w, h, devicePixelRatio }) => {
-      const numberOfPoints = Math.ceil(h * w * POINTS_PER_SQUARE_PIXEL / Math.pow(devicePixelRatio, 2));
+    addPointsInRegion: ({ data, particleDensity }) => ({ x, y, w, h, devicePixelRatio }) => {
+      const numberOfPoints = Math.ceil(h * w * particleDensity / Math.pow(devicePixelRatio, 2));
 
       for(let i = 0; i < numberOfPoints; i += 1) {
         data.points.push(new Particle({
@@ -47,15 +46,18 @@ const Particles1 = compose(
     },
   }),
   withHandlers({
-    update: ({ addPointsInRegion, data }) => ({ canvasHeight, canvasWidth, ctx, devicePixelRatio, height, width }, prev = { canvasHeight: 0, canvasWidth: 0 }) => {
-      ctx.lineWidth = 1;
-      ctx.fillStyle = '#888';
+    setup: ({ data }) => () => {
+      data.points = [];
+    },
+    update: ({ addPointsInRegion, data, particleFill, segmentLength, segmentWidth }) => ({ canvasHeight, canvasWidth, ctx, devicePixelRatio, height, width }, prev = { canvasHeight: 0, canvasWidth: 0 }) => {
+      ctx.lineWidth = segmentWidth;
+      ctx.fillStyle = particleFill;
 
       if(canvasHeight < prev.canvasHeight || canvasWidth < prev.canvasWidth) {
         // crop excess points
         data.points = filter(data.points, (point) => {
-          if (point.x > canvasWidth + POINT_PROXIMITY) return false;
-          if (point.y > canvasHeight + POINT_PROXIMITY) return false;
+          if (point.x > canvasWidth + segmentLength) return false;
+          if (point.y > canvasHeight + segmentLength) return false;
           return true;
         });
       }
@@ -63,9 +65,9 @@ const Particles1 = compose(
       // bottom edge
       if(canvasHeight > prev.canvasHeight) {
         addPointsInRegion({
-          x: 0 - POINT_PROXIMITY,
-          y: prev.canvasHeight + POINT_PROXIMITY,
-          w: prev.canvasWidth + POINT_PROXIMITY * 2,
+          x: 0 - segmentLength,
+          y: prev.canvasHeight + segmentLength,
+          w: prev.canvasWidth + segmentLength * 2,
           h: canvasHeight - prev.canvasHeight,
           devicePixelRatio,
         });
@@ -73,18 +75,18 @@ const Particles1 = compose(
       // right edge
       if(canvasWidth > prev.canvasWidth) {
         addPointsInRegion({
-          x: prev.canvasWidth + POINT_PROXIMITY,
-          y: 0 - POINT_PROXIMITY,
+          x: prev.canvasWidth + segmentLength,
+          y: 0 - segmentLength,
           w: canvasWidth - prev.canvasWidth,
-          h: prev.canvasHeight + POINT_PROXIMITY * 2,
+          h: prev.canvasHeight + segmentLength * 2,
           devicePixelRatio,
         });
       }
       // bottom right corner
       if(canvasHeight > prev.canvasHeight && canvasWidth > prev.canvasWidth) {
         addPointsInRegion({
-          x: prev.canvasWidth + POINT_PROXIMITY,
-          y: prev.canvasHeight + POINT_PROXIMITY,
+          x: prev.canvasWidth + segmentLength,
+          y: prev.canvasHeight + segmentLength,
           w: canvasWidth - prev.canvasWidth,
           h: canvasHeight - prev.canvasHeight,
           devicePixelRatio,
@@ -97,29 +99,25 @@ const Particles1 = compose(
         point.y += (canvasHeight - prev.canvasHeight) / 2;
       });
     },
-    draw: ({ data }) => ({ ctx, canvasHeight, canvasWidth }) => {
+    draw: ({ data, particleSize, particleStrokeColor, particleStrokeWidth, segmentColorObject, segmentLength, segmentWidth }) => ({ ctx, canvasHeight, canvasWidth }) => {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
       let p, q;
       for(let i = 0; i < data.points.length; i += 1) {
         p = data.points[i];
         p.tick({
-          x1: 0 - POINT_PROXIMITY,
-          y1: 0 - POINT_PROXIMITY,
-          x2: canvasWidth + POINT_PROXIMITY,
-          y2: canvasHeight + POINT_PROXIMITY,
+          x1: 0 - segmentLength,
+          y1: 0 - segmentLength,
+          x2: canvasWidth + segmentLength,
+          y2: canvasHeight + segmentLength,
         });
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 3, 0, 2 * Math.PI);
-        ctx.closePath();
-        ctx.fill();
 
         for(let j = 0; j < data.points.length; j += 1) {
           q = data.points[j];
           const distanceSquared = Math.pow(p.x - q.x, 2) + Math.pow(p.y - q.y, 2);
-          if(distanceSquared < POINT_PROXIMITY_SQUARED) {
+          if(distanceSquared < (segmentLength * segmentLength)) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(127, 127, 127, ${1 - distanceSquared / POINT_PROXIMITY_SQUARED})`;
+            ctx.strokeStyle = segmentColorObject.alpha(1 - distanceSquared / (segmentLength * segmentLength));
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(q.x, q.y);
             ctx.closePath();
@@ -127,12 +125,55 @@ const Particles1 = compose(
           }
         }
       }
+
+      // conserve state changes
+      if(particleStrokeWidth) {
+        ctx.strokeStyle = particleStrokeColor;
+        ctx.lineWidth = particleStrokeWidth;
+      }
+
+      for(let i = 0; i < data.points.length; i += 1) {
+        p = data.points[i];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, particleSize / 2, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill();
+
+        if(particleStrokeWidth) {
+          ctx.stroke();
+        }
+      }
+
+      // revert for next draw
+      if(particleStrokeWidth) {
+        ctx.lineWidth = segmentWidth;
+      }
     },
   }),
-  withResizeDetector,
 )(AnimatedCanvas);
 
+Particles1.defaultProps = {
+  particleDensity: 0.0002,
+  particleFill: '#888',
+  particleSize: 6,
+  particleStrokeColor: 'transparent',
+  particleStrokeWidth: 0,
+  segmentColor: '#888',
+  segmentLength: 140,
+  segmentWidth: 1,
+};
+
 Particles1.propTypes = {
+  particleDensity: PropTypes.number,
+  particleFill: PropTypes.string,
+  particleSize: PropTypes.number,
+  particleStrokeColor: PropTypes.string,
+  particleStrokeWidth: PropTypes.number,
+  segmentColor: PropTypes.string,
+  segmentLength: PropTypes.number,
+  segmentWidth: PropTypes.number,
+
+  // inherited from AnimatedCanvas
   className: PropTypes.string,
   devicePixelRatio: PropTypes.number,
   disabled: PropTypes.bool,
