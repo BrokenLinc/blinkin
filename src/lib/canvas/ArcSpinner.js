@@ -1,6 +1,8 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import { compose, withHandlers, withProps } from 'recompose';
 
+import { LINE_CAPS } from '../constants/lineCap';
 import AnimatedCanvas from './AnimatedCanvas';
 
 const ArcSpinner = compose(
@@ -42,7 +44,7 @@ ArcSpinner.propTypes = {
     PropTypes.string,
   ]),
   endSpeed: PropTypes.number,
-  lineCap: PropTypes.oneOf(['butt', 'round', 'square']),
+  lineCap: PropTypes.oneOf(LINE_CAPS),
   startSpeed: PropTypes.number,
   strokeWidth: PropTypes.number,
 
@@ -67,6 +69,32 @@ ArcSpinner.defaultProps = {
   startSpeed: 8.8,
   strokeWidth: 6,
   width: 60,
+};
+
+ArcSpinner.demoProps = {
+  color: 'red',
+  height: 100,
+  lineCap: 'round',
+  strokeWidth: 16,
+  width: 100,
+};
+
+ArcSpinner.knobConfig = {
+  width: { group: 'Size' },
+  height: { group: 'Size' },
+  color: {
+    group: 'Style',
+    type: 'color',
+  },
+  strokeWidth: { group: 'Style' },
+  lineCap: {
+    group: 'Style',
+    type: 'radios',
+    options: LINE_CAPS,
+  },
+  angleSpread: { group: 'Timing' },
+  startSpeed: { group: 'Timing' },
+  endSpeed: { group: 'Timing' },
 };
 
 export default ArcSpinner;

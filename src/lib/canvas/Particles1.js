@@ -117,7 +117,7 @@ const Particles1 = compose(
           const distanceSquared = Math.pow(p.x - q.x, 2) + Math.pow(p.y - q.y, 2);
           if(distanceSquared < (segmentLength * segmentLength)) {
             ctx.beginPath();
-            ctx.strokeStyle = segmentColorObject.alpha(1 - distanceSquared / (segmentLength * segmentLength));
+            ctx.strokeStyle = segmentColorObject.fade(distanceSquared / (segmentLength * segmentLength));
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(q.x, q.y);
             ctx.closePath();
@@ -152,17 +152,6 @@ const Particles1 = compose(
   }),
 )(AnimatedCanvas);
 
-Particles1.defaultProps = {
-  particleDensity: 0.0002,
-  particleFill: '#888',
-  particleSize: 6,
-  particleStrokeColor: 'transparent',
-  particleStrokeWidth: 0,
-  segmentColor: '#888',
-  segmentLength: 140,
-  segmentWidth: 1,
-};
-
 Particles1.propTypes = {
   particleDensity: PropTypes.number,
   particleFill: PropTypes.string,
@@ -180,6 +169,35 @@ Particles1.propTypes = {
   disablingDelay: PropTypes.number,
   maxFps: PropTypes.number,
   style: PropTypes.object,
+};
+
+Particles1.defaultProps = {
+  particleDensity: 0.0002,
+  particleFill: '#888',
+  particleSize: 6,
+  particleStrokeColor: 'transparent',
+  particleStrokeWidth: 0,
+  segmentColor: '#888',
+  segmentLength: 140,
+  segmentWidth: 1,
+};
+
+Particles1.demoProps = {
+  particleFill: '#902',
+  particleSize: 20,
+  particleStrokeColor: '#f03',
+  particleStrokeWidth: 4,
+  segmentColor: '#0cf',
+  segmentWidth: 3,
+};
+
+Particles1.knobConfig = {
+  particleFill: { type: 'color' },
+  particleSize: {},
+  particleStrokeColor: { type: 'color' },
+  particleStrokeWidth: {},
+  segmentColor: { type: 'color' },
+  segmentWidth: {},
 };
 
 export default Particles1;
