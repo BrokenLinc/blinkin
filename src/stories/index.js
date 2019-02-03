@@ -52,4 +52,13 @@ storiesOf('SVG/Ring', module)
 storiesOf('Canvas/Waves3', module)
   .addDecorator(withKnobs)
   .addDecorator(withThemeBackgrounds)
-  .add('Default', () => <Waves3 />);
+  .add('Default', () => <Waves3 />)
+  .add('Custom', () => <Waves3 {...Waves3.demoProps} />)
+  .add('Stacked & Randomized', () => (
+    <div style={{ position: 'relative', height: 320, width: 320 }}>
+      <Waves3 {...Waves3.getRandomProps()} style={{ position: 'absolute', height: '100%', width: '100%' }} />
+      <Waves3 {...Waves3.getRandomProps()} style={{ position: 'absolute', height: '100%', width: '100%' }} />
+      <Waves3 {...Waves3.getRandomProps()} style={{ position: 'absolute', height: '100%', width: '100%' }} />
+    </div>
+  ))
+  .add('Controlled with Knobs', () => <AutoKnobs component={Waves3} />);
