@@ -7,6 +7,7 @@ import ResizeDetector from 'react-resize-detector';
 import AutoKnobs from '../lib/util/AutoKnobs';
 import Ring from '../lib/svg/Ring';
 import ArcSpinner from '../lib/canvas/ArcSpinner';
+import GlowSpinner from '../lib/canvas/GlowSpinner';
 import Particles1 from '../lib/canvas/Particles1';
 import Waves3 from '../lib/canvas/Waves3';
 
@@ -32,6 +33,14 @@ storiesOf('Canvas/ArcSpinner', module)
   .add('Default', () => <ArcSpinner />)
   .add('Custom', () => <ArcSpinner {...ArcSpinner.demoProps} />)
   .add('Controlled with Knobs', () => <AutoKnobs component={ArcSpinner} />);
+
+storiesOf('Canvas/GlowSpinner', module)
+  .addDecorator(withKnobs)
+  .addDecorator(withThemeBackgrounds)
+  .addDecorator((story) => <div className='centered-content'>{story()}</div> )
+  .add('Default', () => <GlowSpinner />)
+  .add('Custom', () => <GlowSpinner {...GlowSpinner.demoProps} />)
+  .add('Controlled with Knobs', () => <AutoKnobs component={GlowSpinner} />);
 
 storiesOf('Canvas/Particles1', module)
   .addDecorator(withKnobs)
