@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import map from 'lodash/map';
 
 const getState = ({ devicePixelRatio, height, width }) => {
   const canvasHeight = height * devicePixelRatio;
@@ -8,8 +9,8 @@ const getState = ({ devicePixelRatio, height, width }) => {
   return {
     canvasHeight,
     canvasWidth,
-    centerX: canvasWidth / 2, // TODO: round?
-    centerY: canvasHeight / 2, // TODO: round?
+    centerX: canvasWidth / 2, // TODO: round for performance gain?
+    centerY: canvasHeight / 2, // TODO: round for performance gain?
   };
 };
 
@@ -17,12 +18,15 @@ class AnimatedCanvas extends Component {
   constructor(props) {
     super(props);
     this.state = getState(props);
+    this.data = {};
   }
 
-  handleCanvasRef = (element) => {
+  handleCanvasRef = (element, layer) => {
     if (element) {
-      this.canvas = element;
-      this.ctx = this.canvas.getContext('2d');
+      const contextName = layer ? `${layer}_ctx` : 'ctx';
+      const canvasName = layer ? `${layer}_canvas` : 'canvas';
+      this.data[canvasName] = element;
+      this.data[contextName] = element.getContext('2d');
     }
   };
 
@@ -30,8 +34,7 @@ class AnimatedCanvas extends Component {
     return {
       ...(nextProps || this.props),
       ...(nextState || this.state),
-      canvas: this.canvas,
-      ctx: this.ctx,
+      ...this.data,
       time: new Date().getTime(),
     };
   }
@@ -76,7 +79,7 @@ class AnimatedCanvas extends Component {
       this.expirationTime = now + disablingDelay;
     }
 
-    if (this.expirationTime >= now && this.ctx) {
+    if (this.expirationTime >= now) {
       this.props.draw(this.getPassableProps());
     }
 
@@ -88,20 +91,29 @@ class AnimatedCanvas extends Component {
   }
 
   render() {
-    const { className, devicePixelRatio, height, style, width } = this.props;
+    const { className, devicePixelRatio, height, layers = '', style, width } = this.props;
     const { canvasHeight, canvasWidth } = this.state;
 
+    // TODO: consider moving into withPropsOnChange
+    const layerNames = layers.replace(/ /g, '').split(',');
+
+    // TODO: move inline styles into constant objects, or use Emotion, etc.
     return (
-      <div className={className} style={{ height, overflow: 'hidden', width, ...style }}>
-        <canvas
-          style={{
-            transform: `scale(${1/devicePixelRatio})`,
-            transformOrigin: '0 0',
-          }}
-          height={canvasHeight}
-          width={canvasWidth}
-          ref={this.handleCanvasRef}
-        />
+      <div className={className} style={{ height, overflow: 'hidden', position: 'relative', width, ...style }}>
+        {map(layerNames, (layerName) => (
+          <canvas
+            style={{
+              left: 0,
+              position: 'absolute',
+              top: 0,
+              transform: `scale(${1/devicePixelRatio})`,
+              transformOrigin: '0 0',
+            }}
+            height={canvasHeight}
+            width={canvasWidth}
+            ref={(element) => this.handleCanvasRef(element, layerName)}
+          />
+        ))}
       </div>
     );
   }
@@ -118,6 +130,7 @@ AnimatedCanvas.propTypes = {
   disabled: PropTypes.bool,
   disablingDelay: PropTypes.number,
   height: PropTypes.number,
+  layers: PropTypes.string, // TODO: accept arrays, disallow duplicates
   maxFps: PropTypes.number,
   style: PropTypes.object,
   width: PropTypes.number,
