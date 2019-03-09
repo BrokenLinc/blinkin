@@ -18,15 +18,16 @@ class AnimatedCanvas extends Component {
   constructor(props) {
     super(props);
     this.state = getState(props);
-    this.data = {};
+    this.canvases = {};
+    this.contexts = {};
   }
 
   handleCanvasRef = (element, layer) => {
     if (element) {
       const contextName = layer ? `${layer}_ctx` : 'ctx';
       const canvasName = layer ? `${layer}_canvas` : 'canvas';
-      this.data[canvasName] = element;
-      this.data[contextName] = element.getContext('2d');
+      this.canvases[canvasName] = element;
+      this.contexts[contextName] = element.getContext('2d');
     }
   };
 
@@ -34,7 +35,8 @@ class AnimatedCanvas extends Component {
     return {
       ...(nextProps || this.props),
       ...(nextState || this.state),
-      ...this.data,
+      ...this.canvases,
+      ...this.contexts,
       time: new Date().getTime(),
     };
   }
@@ -44,8 +46,9 @@ class AnimatedCanvas extends Component {
   }
 
   componentDidMount() {
-    this.props.setup(this.getPassableProps());
-    this.props.update(this.getPassableProps());
+    const passableProps = this.getPassableProps();
+    this.props.setup(passableProps);
+    this.props.update(passableProps);
     this.gameLoop();
   }
 
@@ -102,6 +105,7 @@ class AnimatedCanvas extends Component {
       <div className={className} style={{ height, overflow: 'hidden', position: 'relative', width, ...style }}>
         {map(layerNames, (layerName) => (
           <canvas
+            key={layerName}
             style={{
               left: 0,
               position: 'absolute',
