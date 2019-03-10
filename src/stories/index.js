@@ -9,6 +9,7 @@ import Ring from '../lib/svg/Ring';
 import ArcSpinner from '../lib/canvas/ArcSpinner';
 import GlowSpinner from '../lib/canvas/GlowSpinner';
 import Particles1 from '../lib/canvas/Particles1';
+import Particles2 from '../lib/canvas/Particles2';
 import Waves3 from '../lib/canvas/Waves3';
 
 const withThemeBackgrounds = withBackgrounds([
@@ -49,6 +50,14 @@ storiesOf('Canvas/Particles1', module)
   .add('Default', () => <Particles1 />)
   .add('Custom', () => <Particles1 {...Particles1.demoProps} />)
   .add('Controlled with Knobs', () => <AutoKnobs component={Particles1} />);
+
+storiesOf('Canvas/Particles2', module)
+  .addDecorator(withKnobs)
+  .addDecorator(withThemeBackgrounds)
+  .addDecorator((story) => <ResizeDetector handleHeight handleWidth>{story()}</ResizeDetector> )
+  .add('Default', () => <Particles2 />)
+  .add('Custom', () => <Particles2 {...Particles2.demoProps} />)
+  .add('Controlled with Knobs', () => <AutoKnobs component={Particles2} />);
 
 storiesOf('SVG/Ring', module)
   .addDecorator(withKnobs)

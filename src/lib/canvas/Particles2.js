@@ -27,38 +27,29 @@ const getDistanceSquared = ({ p, q }) => {
   return Math.pow(p.x - q.x, 2) + Math.pow(p.y - q.y, 2);
 };
 
-const Particles1 = compose(
+const Particles2 = compose(
   withProps({
     data: {},
   }),
-  withPropsOnChange(['segmentColor'], ({ segmentColor }) => ({
-    segmentColorObject: color(segmentColor),
-  })),
   withHandlers({
     setup: ({ data, particleDensity }) => ({ canvasHeight, canvasWidth, devicePixelRatio, segmentLength }) => {
       data.pointSystem = new PointSystem({ canvasHeight, canvasWidth, devicePixelRatio, particleDensity, edgeThreshold: segmentLength });
     },
-    update: ({ addPointsInRegion, data, particleFill, segmentLength, segmentWidth }) => ({ canvasHeight, canvasWidth, ctx, devicePixelRatio }) => {
-      ctx.lineWidth = segmentWidth;
+    update: ({ addPointsInRegion, data, particleFill, particleSize }) => ({ canvasHeight, canvasWidth, ctx, devicePixelRatio }) => {
       ctx.fillStyle = particleFill;
 
-      data.pointSystem.setSize({ canvasHeight, canvasWidth, devicePixelRatio });
+      data.pointSystem.setSize({ canvasHeight, canvasWidth, devicePixelRatio, edgeThreshold: particleSize });
     },
-    draw: ({ data, particleSize, particleStrokeColor, particleStrokeWidth, segmentColorObject, segmentLength, segmentWidth }) => ({ ctx, canvasHeight, canvasWidth }) => {
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    draw: ({ data, particleSize, particleStrokeColor, particleStrokeWidth }) => ({ ctx, canvasHeight, canvasWidth }) => {
+      // ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+      // ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(255,0,0,0)';
+      ctx.rect(0, 0, canvasWidth, canvasHeight);
+      ctx.fill();
+      // ctx.globalCompositeOperation = 'source-over';
 
       data.pointSystem.tick();
-
-      each(data.pointSystem.points, (p) => {
-        each(data.pointSystem.points, (q) => {
-          const distanceSquared = getDistanceSquared({ p, q });
-          if(distanceSquared < (segmentLength * segmentLength)) {
-            const color = segmentColorObject.fade(distanceSquared / (segmentLength * segmentLength));
-            drawLinePath({ ctx, p, q, color });
-            ctx.stroke();
-          }
-        });
-      });
 
       // conserve state changes
       if(particleStrokeWidth) {
@@ -75,24 +66,16 @@ const Particles1 = compose(
           ctx.stroke();
         }
       });
-
-      // revert for next draw
-      if(particleStrokeWidth) {
-        ctx.lineWidth = segmentWidth;
-      }
     },
   }),
 )(AnimatedCanvas);
 
-Particles1.propTypes = {
+Particles2.propTypes = {
   particleDensity: PropTypes.number,
   particleFill: PropTypes.string,
   particleSize: PropTypes.number,
   particleStrokeColor: PropTypes.string,
   particleStrokeWidth: PropTypes.number,
-  segmentColor: PropTypes.string,
-  segmentLength: PropTypes.number,
-  segmentWidth: PropTypes.number,
 
   // inherited from AnimatedCanvas
   className: PropTypes.string,
@@ -103,33 +86,26 @@ Particles1.propTypes = {
   style: PropTypes.object,
 };
 
-Particles1.defaultProps = {
+Particles2.defaultProps = {
   particleDensity: 0.0002,
   particleFill: '#888',
   particleSize: 6,
   particleStrokeColor: 'transparent',
   particleStrokeWidth: 0,
-  segmentColor: '#888',
-  segmentLength: 140,
-  segmentWidth: 1,
 };
 
-Particles1.demoProps = {
+Particles2.demoProps = {
   particleFill: '#902',
   particleSize: 20,
   particleStrokeColor: '#f03',
   particleStrokeWidth: 4,
-  segmentColor: '#0cf',
-  segmentWidth: 3,
 };
 
-Particles1.knobConfig = {
+Particles2.knobConfig = {
   particleFill: { type: 'color' },
   particleSize: {},
   particleStrokeColor: { type: 'color' },
   particleStrokeWidth: {},
-  segmentColor: { type: 'color' },
-  segmentWidth: {},
 };
 
-export default Particles1;
+export default Particles2;
